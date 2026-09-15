@@ -17,6 +17,8 @@ def normalize_disease_name(name: str) -> str:
     return name
 
 def clean_column_names(columns):
+    """Fixes column-name whitespace issues, collapses resulting double underscores."""
+
     """
     Fixes known column-name whitespace issues in Training.csv:
     'spotting_ urination' -> 'spotting_urination', etc.
@@ -26,9 +28,17 @@ def clean_column_names(columns):
     cleaned = []
     for c in columns:
         c = c.strip()
-        c = c.replace(" ", "-")
+        c = c.replace(" ", "_")
+        c = re.sub(r"_+", "_", c)   # collapse double underscores
         cleaned.append(c)
     return cleaned
+
+def clean_severity_symptom_names(series: pd.Series) -> pd.Series:
+    """Symptom-severity.csv has its OWN separate naming typo, reconciled here."""
+    fixes = {"foul_smell_ofurine": "foul_smell_of_urine"}
+    s = series.str.strip()
+    s = s.replace(fixes)
+    return s
 
 def load_and_clean_training(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path)
@@ -39,6 +49,10 @@ def load_and_clean_training(path: Path) -> pd.DataFrame:
     # Rename the second fluid_overload column to something explicit rather than the confusing pandas-generated ".1" suffix -- these are genuinely
     # DIFFERENT columns (114 rows differ), not true duplicates, so we keep both
     df = df.rename(columns={"fluid_overload.1": "fluid_overload_2"})
+
+    # 'fluid_overload' confirmed dead during EDA: zero occurrences across
+    # all 4,920 rows. Zero variance = zero predictive value -- drop it.
+    df = df.drop(columns=["fluid_overload"])
 
     # Normalize the target label -- this is the fix for the disease-name
     # mismatch bug found during inspection
@@ -73,12 +87,13 @@ def load_and_clean_companion_files():
         df = pd.read_csv(RAW_DIR / fname)
         if disease_col:
             df[disease_col] = df[disease_col].apply(normalize_disease_name)
+        if key == "severity":
+            df = df[df["Symptom"].str.strip() != "prognosis"].copy()    # drop spurious target row
         cleaned[key] = df
     return cleaned
 
 def main():
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-
     train = load_and_clean_training(RAW_DIR / "Training.csv")
     companions = load_and_clean_companion_files()
 
@@ -95,7 +110,12 @@ def main():
     for key, df in companions.items():
         df.to_csv(PROCESSED_DIR / f"{key}_clean.csv", index=False)
 
-    print(f"\n[done] {len(train)} rows, {train['prognosis'].nunique()} diseases")
+    symptom_cols = set(c for c in train.columns if c != "prognosis")
+    sev_symptoms = set(companions["severity"]["Symptom"])
+    mismatch = symptom_cols.symmetric_difference(sev_symptoms)
+    print(f"[check] severity symptom alignment: {'OK' if not mismatch else f'residual (expected): {mismatch}'}")
+
+    print(f"\n[done] {len(train)} rows, {train['prognosis'].nunique()} diseases, {len(symptom_cols)} symptom features")
     print(f"[done] Cleaned files written to {PROCESSED_DIR}/")
 
 
