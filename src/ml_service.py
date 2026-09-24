@@ -7,7 +7,7 @@ import numpy as np       # used for numerical operations and array manipulations
 import pandas as pd       # used for data manipulation and analysis
 from pathlib import Path       # used for handling file paths
 
-MODELS_DIR = Path(__file__).resolve().parent / "models"       # define the directory where the trained model is stored
+MODELS_DIR = Path(__file__).resolve().parent.parent / "models"       # define the directory where the trained model is stored
 
 _model = joblib.load(MODELS_DIR / "best_model.joblib")       # load the trained machine learning model from the specified file
 _label_encoder = joblib.load(MODELS_DIR / "disease_label_encoder.joblib")       # load the label encoder from the specified file
