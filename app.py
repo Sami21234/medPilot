@@ -2,6 +2,8 @@ from flask import Flask, render_template        # import the Flask class and ren
 from src.models import db       # import the database instance from the models module
 from src.auth import auth_bp, init_auth       # import the authentication blueprint and initialization function from the auth module
 from src.routes.patient import patient_bp       # import the patient blueprint from the patient module
+from src.routes.doctor import doctor_bp     # import the doctor blueprint from the doctor module
+from src.routes.admin import admin_bp       # import the admin blueprint from the  admin module
 
 def create_app():        # define a function to create the Flask application
     app = Flask(__name__)        # create a new Flask application instance
@@ -13,6 +15,8 @@ def create_app():        # define a function to create the Flask application
 
     app.register_blueprint(auth_bp)        # register the authentication blueprint with the Flask application
     app.register_blueprint(patient_bp)        # register the patient blueprint with the Flask application
+    app.register_blueprint(doctor_bp)       # register the doctor blueprint with the Flask application
+    app.register_blueprint(admin_bp)        # register the admin blueprint with the Flask application
 
     @app.route("/")        # define a route for the home page
     def index():        # define the index function to handle requests to the home page
