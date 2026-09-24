@@ -1,0 +1,17 @@
+<h1>Case #{{ case.id }}</h1>
+<p>Patient: {{ case.patient.name }}</p>
+<p>Symptoms: {{ case.symptoms_submitted | join(', ') }}</p>
+<p>AI Prediction: <strong>{{ case.predicted_disease.name }}</strong> (confidence: {{ (case.confidence_score*100)|round(1) }}%)</p>
+
+<form method="POST" action="/doctor/cases/{{ case.id }}/validate">
+  <label><input type="radio" name="decision" value="confirm" checked> Confirm AI prediction</label><br>
+  <label><input type="radio" name="decision" value="override"> Override with:
+    <select name="override_disease_id">
+      {% for d in all_diseases %}
+        <option value="{{ d.id }}">{{ d.name }}</option>
+      {% endfor %}
+    </select>
+  </label><br>
+  <textarea name="notes" placeholder="Doctor notes"></textarea><br>
+  <button>Submit Validation</button>
+</form>
