@@ -1,6 +1,6 @@
 from functools import wraps     # used for decorators -> (for example @token_required) for authentication
 from flask import Blueprint, request, redirect, url_for, flash, abort       # used for routing and handling HTTP requests
-from flask_login import login_user, logout_user, current_user, login_required     # used for user session management and authentication
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required     # used for user session management and authentication
 from src.models import User, db, Doctor, Patient     # used for database models and database session management
 
 auth_bp = Blueprint('auth', __name__)     # create a blueprint for authentication routes
