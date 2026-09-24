@@ -1,0 +1,9 @@
+<h1>Doctor Dashboard - Pending Cases</h1>
+{% for c in cases %}
+  <div>
+    <p>Case #{{ c.id }} | Patient: {{ c.patient.name }} | AI predicted: {{ c.predicted_disease.name }} ({{ (c.confidence_score*100)|round(1) }}%)</p>
+    <a href="/doctor/cases/{{ c.id }}">Review</a>
+  </div>
+{% else %}
+  <p>No pending cases.</p>
+{% endfor %}
