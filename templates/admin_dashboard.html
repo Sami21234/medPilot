@@ -1,0 +1,15 @@
+<h1>Admin - Doctor Verification</h1>
+<h2>Unverified Doctors</h2>
+{% for d in unverified %}
+  <p>{{ d.user.name }} ({{ d.user.email }}) - License: {{ d.license_number }}
+    <form method="POST" action="/admin/verify/{{ d.user_id }}" style="display:inline">
+      <button>Verify</button>
+    </form>
+  </p>
+{% else %}
+  <p>None pending.</p>
+{% endfor %}
+<h2>Verified Doctors</h2>
+{% for d in verified %}
+  <p>{{ d.user.name }} ({{ d.user.email }})</p>
+{% endfor %}
