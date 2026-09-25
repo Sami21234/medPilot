@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MedPilot{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="navbar">
+    <p class="brand">🩺 MedPilot</p>
+    <div>
+      {% if current_user.is_authenticated %}
+        {% if current_user.role == 'patient' %}<a href="/patient/dashboard">Dashboard</a>{% endif %}
+        {% if current_user.role == 'doctor' %}<a href="/doctor/dashboard">Dashboard</a>{% endif %}
+        {% if current_user.role == 'admin' %}<a href="/admin/dashboard">Dashboard</a>{% endif %}
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/">Login / Register</a>
+      {% endif %}
+    </div>
+  </nav>
+  <div class="container">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
