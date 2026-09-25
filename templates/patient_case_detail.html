@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Case #{{ case.id }}</h1>
+  <p><strong>Submitted:</strong> {{ case.created_at.strftime('%B %d, %Y') }}</p>
+  <p><strong>Symptoms reported:</strong> {{ case.symptoms_submitted | join(', ') }}</p>
+  <span class="badge {{ 'badge-validated' if case.status == 'validated' else 'badge-pending' }}">
+    {{ 'Confirmed by Doctor' if case.status == 'validated' else 'Pending Doctor Review' }}
+  </span>
+</div>
+
+{% if case.status == 'validated' and case.final_disease %}
+  <div class="card">
+    <h2>Diagnosis: {{ case.final_disease.name }}</h2>
+    <p>{{ case.final_disease.description }}</p>
+    {% if case.doctor %}<p><em>Reviewed by Dr. {{ case.doctor.name }}</em></p>{% endif %}
+    {% if case.doctor_notes %}<p><strong>Doctor's notes:</strong> {{ case.doctor_notes }}</p>{% endif %}
+
+    <div class="rec-section">
+      <h3>💊 Recommended Medications</h3>
+      <ul class="rec-list">{% for m in case.final_disease.medications %}<li>{{ m.content }}</li>{% endfor %}</ul>
+    </div>
+    <div class="rec-section">
+      <h3>🥗 Diet Recommendations</h3>
+      <ul class="rec-list">{% for d in case.final_disease.diets %}<li>{{ d.content }}</li>{% endfor %}</ul>
+    </div>
+    <div class="rec-section">
+      <h3>⚠️ Precautions</h3>
+      <ul class="rec-list">{% for p in case.final_disease.precautions %}<li>{{ p.content }}</li>{% endfor %}</ul>
+    </div>
+    <div class="rec-section">
+      <h3>🏃 Suggested Activity</h3>
+      <ul class="rec-list">{% for w in case.final_disease.workouts[:5] %}<li>{{ w.content }}</li>{% endfor %}</ul>
+    </div>
+  </div>
+{% else %}
+  <div class="card empty-state">
+    <p>A doctor hasn't reviewed this case yet. You'll see your confirmed diagnosis and recommendations here once they do.</p>
+  </div>
+{% endif %}
+{% endblock %}
