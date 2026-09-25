@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Welcome to MedPilot</h1>
+  <p>AI-assisted symptom checking, reviewed and confirmed by a licensed doctor before any diagnosis is final.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('login')">Login</button>
+  <button class="tab-btn" onclick="showTab('register')">Register</button>
+</div>
+
+<div id="login-tab" class="tab-content active card">
+  <form method="POST" action="/login">
+    <label>Email</label><input name="email" type="email" required>
+    <label>Password</label><input name="password" type="password" required>
+    <button class="btn">Login</button>
+  </form>
+</div>
+
+<div id="register-tab" class="tab-content card">
+  <form method="POST" action="/register">
+    <label>Full Name</label><input name="name" required>
+    <label>Email</label><input name="email" type="email" required>
+    <label>Password</label><input name="password" type="password" required>
+    <label>I am a</label>
+    <select name="role" onchange="toggleRoleFields(this.value)">
+      <option value="patient">Patient</option>
+      <option value="doctor">Doctor</option>
+    </select>
+    <div id="patient-fields">
+      <label>Age</label><input name="age" type="number">
+      <label>Gender</label>
+      <select name="gender"><option>Female</option><option>Male</option><option>Other</option></select>
+    </div>
+    <div id="doctor-fields" style="display:none">
+      <label>Specialization</label><input name="specialization">
+      <label>License Number</label><input name="license_number">
+    </div>
+    <button class="btn">Create Account</button>
+  </form>
+</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(name + '-tab').classList.add('active');
+  event.target.classList.add('active');
+}
+function toggleRoleFields(role) {
+  document.getElementById('patient-fields').style.display = role === 'patient' ? 'block' : 'none';
+  document.getElementById('doctor-fields').style.display = role === 'doctor' ? 'block' : 'none';
+}
+</script>
+{% endblock %}
