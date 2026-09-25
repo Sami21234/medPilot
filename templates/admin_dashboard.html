@@ -1,15 +1,22 @@
-<h1>Admin - Doctor Verification</h1>
-<h2>Unverified Doctors</h2>
-{% for d in unverified %}
-  <p>{{ d.user.name }} ({{ d.user.email }}) - License: {{ d.license_number }}
-    <form method="POST" action="/admin/verify/{{ d.user_id }}" style="display:inline">
-      <button>Verify</button>
-    </form>
-  </p>
-{% else %}
-  <p>None pending.</p>
-{% endfor %}
-<h2>Verified Doctors</h2>
-{% for d in verified %}
-  <p>{{ d.user.name }} ({{ d.user.email }})</p>
-{% endfor %}
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Doctor Verification Queue</h1>
+  {% for d in unverified %}
+    <div class="case-row">
+      <div>{{ d.user.name }} ({{ d.user.email }}) - {{ d.specialization }}, License: {{ d.license_number }}</div>
+      <form method="POST" action="/admin/verify/{{ d.user_id }}"><button class="btn">Verify</button></form>
+    </div>
+  {% else %}
+    <p class="empty-state">No pending verifications.</p>
+  {% endfor %}
+</div>
+<div class="card">
+  <h2>Verified Doctors</h2>
+  {% for d in verified %}
+    <div class="case-row"><div>{{ d.user.name }} - {{ d.specialization }}</div></div>
+  {% else %}
+    <p class="empty-state">None yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
