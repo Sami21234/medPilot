@@ -1,17 +1,30 @@
-<h1>Case #{{ case.id }}</h1>
-<p>Patient: {{ case.patient.name }}</p>
-<p>Symptoms: {{ case.symptoms_submitted | join(', ') }}</p>
-<p>AI Prediction: <strong>{{ case.predicted_disease.name }}</strong> (confidence: {{ (case.confidence_score*100)|round(1) }}%)</p>
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Case #{{ case.id }}</h1>
+  <p><strong>Patient:</strong> {{ case.patient.name }}</p>
+  <p><strong>Symptoms:</strong> {{ case.symptoms_submitted | join(', ') }}</p>
 
-<form method="POST" action="/doctor/cases/{{ case.id }}/validate">
-  <label><input type="radio" name="decision" value="confirm" checked> Confirm AI prediction</label><br>
-  <label><input type="radio" name="decision" value="override"> Override with:
+  <h2>AI Prediction</h2>
+  <p><strong>{{ case.predicted_disease.name }}</strong></p>
+  <div class="confidence-bar"><div class="confidence-fill" style="width:{{ (case.confidence_score*100)|round(1) }}%"></div></div>
+  <p style="color:var(--muted)">{{ (case.confidence_score*100)|round(1) }}% confidence</p>
+</div>
+
+<div class="card">
+  <h2>Your Decision</h2>
+  <form method="POST" action="/doctor/cases/{{ case.id }}/validate">
+    <label><input type="radio" name="decision" value="confirm" checked style="width:auto;display:inline;margin-right:8px">
+      Confirm - I agree with the AI's prediction</label>
+    <br><br>
+    <label><input type="radio" name="decision" value="override" style="width:auto;display:inline;margin-right:8px">
+      Override - the correct diagnosis is:</label>
     <select name="override_disease_id">
-      {% for d in all_diseases %}
-        <option value="{{ d.id }}">{{ d.name }}</option>
-      {% endfor %}
+      {% for d in all_diseases %}<option value="{{ d.id }}">{{ d.name }}</option>{% endfor %}
     </select>
-  </label><br>
-  <textarea name="notes" placeholder="Doctor notes"></textarea><br>
-  <button>Submit Validation</button>
-</form>
+    <label>Notes (optional)</label>
+    <textarea name="notes" rows="3" placeholder="Any clinical notes..."></textarea>
+    <button class="btn">Submit Decision</button>
+  </form>
+</div>
+{% endblock %}
