@@ -1,9 +1,17 @@
-<h1>Doctor Dashboard - Pending Cases</h1>
-{% for c in cases %}
-  <div>
-    <p>Case #{{ c.id }} | Patient: {{ c.patient.name }} | AI predicted: {{ c.predicted_disease.name }} ({{ (c.confidence_score*100)|round(1) }}%)</p>
-    <a href="/doctor/cases/{{ c.id }}">Review</a>
-  </div>
-{% else %}
-  <p>No pending cases.</p>
-{% endfor %}
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Cases Awaiting Review</h1>
+  {% for c in cases %}
+    <div class="case-row">
+      <div>
+        <strong>Case #{{ c.id }}</strong> - Patient: {{ c.patient.name }}
+        <br><span style="color:var(--muted)">AI suggests: {{ c.predicted_disease.name }} ({{ (c.confidence_score*100)|round(1) }}% confidence)</span>
+      </div>
+      <a href="/doctor/cases/{{ c.id }}" class="btn">Review</a>
+    </div>
+  {% else %}
+    <p class="empty-state">No cases pending review.</p>
+  {% endfor %}
+</div>
+{% endblock %}
