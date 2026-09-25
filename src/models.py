@@ -68,6 +68,16 @@ class Medication(db.Model):     # define the Medication model, inheriting from d
     content = db.Column(db.Text, nullable=False)     # define the content column for the Medication model
     disease = db.relationship('Disease', backref='medications')     # define the relationship between the Medication and Disease models(backref allows access to the medications from the disease instance)
 
+class Diet(db.Model):     # define the Diet model, inheriting from db.Model
+    """Diet information."""
+
+    __tablename__ = 'diets'     # specify the table name for the Diet model
+
+    id = db.Column(db.Integer, primary_key=True)     # define the primary key column for the Diet model
+    disease_id = db.Column(db.Integer, db.ForeignKey('diseases.id'), nullable=False)     # define the foreign key column for the Diet model, linking to the Disease model
+    content = db.Column(db.Text, nullable=False)     # define the content column for the Diet model
+    disease = db.relationship('Disease', backref='diets')     # define the relationship between the Diet and Disease models(backref allows access to the diets from the disease instance)
+
 class Precaution(db.Model):     # define the Precaution model, inheriting from db.Model
     """Precaution information."""
 
