@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Symptom Checker</h1>
+  <p>Select all symptoms you're currently experiencing, then submit for AI-assisted review.</p>
+  <form method="POST" action="/patient/submit">
+    <input type="text" class="symptom-search" placeholder="Search symptoms..." onkeyup="filterSymptoms(this.value)">
+    <div class="symptom-grid" id="symptom-grid">
+      {% for s in symptoms %}
+        <label class="symptom-item" data-name="{{ s|lower }}">
+          <input type="checkbox" name="symptoms" value="{{ s }}">
+          {{ s.replace('_', ' ')|title }}
+        </label>
+      {% endfor %}
+    </div>
+    <br>
+    <button class="btn">Submit Symptoms</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Your Case History</h2>
+  {% for c in cases %}
+    <div class="case-row">
+      <div>
+        <strong>Case #{{ c.id }}</strong> - {{ c.created_at.strftime('%b %d, %Y') }}
+        <span class="badge {{ 'badge-validated' if c.status == 'validated' else 'badge-pending' }}">
+          {{ 'Confirmed' if c.status == 'validated' else 'Pending Review' }}
+        </span>
+      </div>
+      <a href="/patient/cases/{{ c.id }}" class="btn btn-outline">View</a>
+    </div>
+  {% else %}
+    <p class="empty-state">No cases submitted yet.</p>
+  {% endfor %}
+</div>
+
+<script>
+function filterSymptoms(query) {
+  query = query.toLowerCase();
+  document.querySelectorAll('.symptom-item').forEach(el => {
+    el.classList.toggle('hidden', !el.dataset.name.includes(query));
+  });
+}
+</script>
+{% endblock %}
