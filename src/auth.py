@@ -57,7 +57,7 @@ def register():
     db.session.flush()     # get user.id before committing, to create the role-specific row
 
     if role == "patient":     # if the role is patient, create a new patient instance
-        patient = Patient(user_id=user.id)     # create a new patient instance with the user ID
+        patient = Patient(user_id=user.id, age = data.get("age"), gender=data.get("gender"))     # create a new patient instance with the user ID and additional patient information
         db.session.add(patient)     # add the patient to the database session
     else:
         # Doctor accounts start UNVERIFIED -- someone (e.g. an admin process)
@@ -67,12 +67,19 @@ def register():
             user_id=user.id,
             specialization=data.get("specialization", ""),
             license_number=data.get("license_number", ""), 
-            verified=False,
+            is_verified=False,
         ))     # add the doctor to the database session with verified set to False
 
     db.session.commit()     # commit the changes to the database
     login_user(user)     # log in the user after registration
-    return redirect(url_for("patient.dashboard" if role == "patient" else "doctor.dashboard"))     # redirect to the appropriate dashboard based on the user's role
+    # return redirect(url_for("patient.dashboard" if role == "patient" else "doctor.dashboard"))     # redirect to the appropriate dashboard based on the user's role
+    # Redirect based on user role
+    if user.role == "patient":
+        return redirect(url_for("patient.dashboard"))
+    elif user.role == "admin":
+        return redirect(url_for("admin.dashboard"))
+    else:
+        return redirect(url_for("doctor.dashboard"))
 
 @auth_bp.route("/login", methods = ["GET", "POST"])     # route for user login, accepts GET and POST requests
 def login():
@@ -88,7 +95,15 @@ def login():
         return redirect(url_for("index"))     # redirect to the index page
 
     login_user(user)     # log in the user if the email and password are valid
-    return redirect(url_for("patient.dashboard" if user.role == "patient" else "doctor.dashboard"))     # redirect to the appropriate dashboard based on the user's role
+    # return redirect(url_for("patient.dashboard" if user.role == "patient" else "doctor.dashboard"))     # redirect to the appropriate dashboard based on the user's role
+    
+    # Redirect based on user role
+    if user.role == "patient":
+        return redirect(url_for("patient.dashboard"))
+    elif user.role == "admin":
+        return redirect(url_for("admin.dashboard"))
+    else:
+        return redirect(url_for("doctor.dashboard"))
 
 @auth_bp.route("/logout")     # route for user logout
 @login_required     # decorator to ensure that the user is logged in before accessing this route
