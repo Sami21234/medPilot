@@ -2,7 +2,7 @@
 {% block content %}
 <div class="card">
   <h1>Doctor Verification Queue</h1>
-  {% for d in unverified %}
+  {% for d in unverified_doctors %}
     <div class="case-row">
       <div>{{ d.user.name }} ({{ d.user.email }}) - {{ d.specialization }}, License: {{ d.license_number }}</div>
       <form method="POST" action="/admin/verify/{{ d.user_id }}"><button class="btn">Verify</button></form>
@@ -13,7 +13,7 @@
 </div>
 <div class="card">
   <h2>Verified Doctors</h2>
-  {% for d in verified %}
+  {% for d in verified_doctors %}
     <div class="case-row"><div>{{ d.user.name }} - {{ d.specialization }}</div></div>
   {% else %}
     <p class="empty-state">None yet.</p>
