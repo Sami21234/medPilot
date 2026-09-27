@@ -2,6 +2,7 @@
 {% block content %}
 <div class="card">
   <h1>Doctor Verification Queue</h1>
+  <a href="/admin/analytics" class="btn btn-outline" style="margin-bottom:16px;display:inline-block">📊 View Agreement Analytics</a>
   {% for d in unverified_doctors %}
     <div class="case-row">
       <div>{{ d.user.name }} ({{ d.user.email }}) - {{ d.specialization }}, License: {{ d.license_number }}</div>

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>AI ↔ Doctor Agreement Analytics</h1>
+  <p style="font-size:2rem; color:var(--primary); font-weight:700">{{ agreement_rate }}%</p>
+  <p style="color:var(--muted)">of {{ total }} doctor-reviewed cases, the AI's prediction was confirmed as-is</p>
+  <div class="case-row">
+    <div>✅ Confirmed (AI agreed with)</div><div><strong>{{ agreed }}</strong></div>
+  </div>
+  <div class="case-row">
+    <div>✏️ Overridden by doctor</div><div><strong>{{ overridden }}</strong></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Per-Disease Breakdown</h2>
+  {% for disease, counts in per_disease.items() %}
+    <div class="case-row">
+      <div>{{ disease }}</div>
+      <div>{{ counts.agreed }} confirmed / {{ counts.overridden }} overridden</div>
+    </div>
+  {% else %}
+    <p class="empty-state">No validated cases yet - data will appear here as doctors review cases.</p>
+  {% endfor %}
+</div>
+{% endblock %}
