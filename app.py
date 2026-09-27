@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template        # import the Flask class and render_template function from the flask module  
 from src.models import db       # import the database instance from the models module
 from src.auth import auth_bp, init_auth       # import the authentication blueprint and initialization function from the auth module
@@ -8,7 +9,7 @@ from src.routes.admin import admin_bp       # import the admin blueprint from th
 def create_app():        # define a function to create the Flask application
     app = Flask(__name__)        # create a new Flask application instance
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///medpilot.db'        # configure the database URI for SQLAlchemy
-    app.config['SECRET_KEY'] = 'dev-secret-change-in-production'        # set a secret key for session management and security
+    app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY","dev-secret-change-in-production")        # set a secret key for session management and security
 
     db.init_app(app)        # initialize the database with the Flask application
     init_auth(app)        # initialize authentication with the Flask application
